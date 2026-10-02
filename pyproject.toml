@@ -1,0 +1,12 @@
+[project]
+name = "gemini-web-tool-calling"
+version = "0.1.0"
+description = "qwen-tool-calling behind a web server: FastAPI + LiteLLM + Gemini, with tool calls shown in the UI"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "litellm>=1.50",
+    "google-cloud-aiplatform>=1.40.0",
+    "requests>=2.31",
+]
