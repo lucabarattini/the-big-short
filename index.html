@@ -1,194 +1,241 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Gemini Web Tool Calling</title>
-        <style>
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-            body {
-                font-family: system-ui, sans-serif;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 3rem 1rem;
-            }
-            #container {
-                width: 100%;
-                max-width: 900px;
-                display: flex;
-                flex-direction: column;
-                border: 1px solid #e0e0e0;
-            }
-            #messages {
-                overflow-y: auto;
-                padding: 2rem;
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
-                min-height: 450px;
-                max-height: 70vh;
-            }
-            .msg {
-                line-height: 1.5;
-                max-width: 80%;
-            }
-            .msg.user {
-                align-self: flex-end;
-                text-align: right;
-            }
-            .msg .role {
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                color: #999;
-                margin-bottom: 0.25rem;
-            }
-            .msg.loading .content {
-                color: #999;
-            }
-            #input-area {
-                display: flex;
-                gap: 1rem;
-                padding: 1.5rem;
-                border-top: 1px solid #e0e0e0;
-            }
-            #user-input {
-                flex: 1;
-                padding: 0.75rem 0;
-                border: none;
-                border-bottom: 1px solid #e0e0e0;
-                font-size: 1rem;
-                outline: none;
-            }
-            #user-input:focus {
-                border-bottom-color: #000;
-            }
-            button {
-                padding: 0.75rem 1.5rem;
-                background: #000;
-                color: #fff;
-                border: none;
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                cursor: pointer;
-            }
-            .tool {
-                font-family: ui-monospace, monospace;
-                font-size: 0.75rem;
-                color: #555;
-                background: #f5f5f5;
-                border-left: 3px solid #f59e0b;
-                padding: 0.5rem 0.75rem;
-                margin: 0.25rem 0 0.75rem;
-                white-space: pre-wrap;
-                word-break: break-word;
-            }
-            .tool .label {
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                color: #b45309;
-            }
-            button:disabled {
-                opacity: 0.3;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="container">
-            <div id="messages"></div>
-            <div id="input-area">
-                <input
-                    type="text"
-                    id="user-input"
-                    placeholder="Type a message..."
-                    autocomplete="off"
-                />
-                <button id="send-btn">Send</button>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Big Short</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; background: #f5f5f7; color: #1d1d1f; }
+        button, input { font: inherit; }
+        button { cursor: pointer; }
+        button:disabled { opacity: .5; cursor: wait; }
+        button:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #0071e3; outline-offset: 2px; }
+        [hidden] { display: none !important; }
+        #container { max-width: 1120px; margin: auto; min-height: 100dvh; display: flex; flex-direction: column; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.05); }
+        header { position: relative; min-height: 240px; margin: 16px 16px 0; padding: 36px 32px; display: flex; align-items: flex-end; overflow: hidden; color: #fff; background: #111; border-radius: 18px; }
+        header::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.5); }
+        .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 22%; }
+        .brand { position: relative; z-index: 1; }
+        .eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #ff453a; margin-bottom: 8px; }
+        h1 { font-size: 40px; line-height: 1; font-weight: 750; letter-spacing: 0; }
+        .brand .eyebrow { color: #fff; }
+        header p { font-size: 15px; color: #fff; margin-top: 10px; }
+        #clear-btn { position: relative; z-index: 1; margin-left: auto; flex-shrink: 0; background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.5); border-radius: 8px; padding: 9px 14px; backdrop-filter: blur(16px); }
+        #introduction { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 48px; padding: 40px 32px; font-size: 16px; line-height: 1.7; border-bottom: 1px solid #d2d2d7; }
+        #introduction p + p { margin-top: 20px; }
+        .use-intro { margin-bottom: 8px; }
+        .use-intro h2 { font-size: 20px; line-height: 1.15; letter-spacing: 0; }
+        .use-list { padding-left: 18px; font-size: 13px; line-height: 1.4; }
+        .use-list li + li { margin-top: 12px; }
+        #messages { min-height: 320px; padding: 40px 32px; display: flex; flex-direction: column; gap: 28px; }
+        #messages > * { flex-shrink: 0; }
+        #messages:empty::before { content: "Choose a starting question below."; color: #86868b; font-size: 20px; font-weight: 600; margin: auto; }
+        .msg { line-height: 1.58; max-width: 88%; overflow-wrap: anywhere; }
+        .msg.user { align-self: flex-end; background: #f2f2f7; padding: 12px 15px; border-radius: 8px; }
+        .role { font-size: 10px; text-transform: uppercase; color: #6e6e73; margin-bottom: 6px; font-weight: 700; }
+        .content { white-space: pre-wrap; }
+        .loading .content { color: #6e6e73; }
+        .tool { font-size: 12px; border-left: 3px solid #0071e3; background: #f2f7fd; padding: 12px 15px; overflow-wrap: anywhere; }
+        .tool .label { color: #0056ad; font-weight: 750; margin-bottom: 6px; }
+        .tool .args, .tool pre { font: 12px/1.6 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .tool summary { cursor: pointer; margin-top: 9px; color: #515154; }
+        .tool pre { max-height: 320px; overflow: auto; margin-top: 10px; }
+        #input-area { flex-shrink: 0; padding: 24px 32px 20px; background: rgba(255,255,255,.94); border-top: 1px solid #d2d2d7; }
+        #starter-options p { font-size: 12px; font-weight: 650; color: #6e6e73; margin-bottom: 9px; }
+        .starter-buttons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+        .starter-buttons button { min-height: 58px; padding: 9px 12px; border: 1px solid #d2d2d7; border-radius: 8px; background: #fff; color: #1d1d1f; text-align: left; font-size: 13px; font-weight: 600; }
+        .starter-buttons button:hover { border-color: #86868b; background: #f5f5f7; }
+        form { display: flex; gap: 10px; }
+        #user-input { min-width: 0; flex: 1; border: 1px solid #c7c7cc; border-radius: 8px; padding: 13px 14px; background: #fff; color: #1d1d1f; }
+        #send-btn { border: none; border-radius: 8px; background: #1d1d1f; color: #fff; padding: 12px 20px; font-weight: 650; }
+        footer { font-size: 10px; color: #86868b; margin-top: 8px; text-align: center; line-height: 1.4; }
+        @media (max-width: 700px) {
+            header { min-height: 180px; margin: 8px 8px 0; padding: 24px 16px; border-radius: 14px; }
+            .hero-image { object-position: center 20%; }
+            h1 { font-size: 32px; }
+            header p { font-size: 13px; }
+            #clear-btn { font-size: 12px; padding: 8px; }
+            #introduction { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px; }
+            .use-intro h2 { font-size: 17px; }
+            #messages { min-height: 240px; padding: 28px 20px; }
+            #messages:empty::before { font-size: 17px; }
+            #input-area { padding: 20px 20px 16px; }
+            .starter-buttons { grid-template-columns: 1fr; }
+            #send-btn { padding: 12px; }
+            .msg { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <main id="container">
+        <header>
+            <img class="hero-image" src="https://i0.wp.com/revealnews.org/wp-content/uploads/2016/02/Christian-Bale-in-The-Big-Short.jpg?fit=780%2C390&amp;ssl=1" alt="Christian Bale as Michael Burry in The Big Short" />
+            <div class="brand"><div class="eyebrow">Markets without the mystique</div><h1>The Big Short</h1><p>Explore what is trading. Understand what the price really means.</p></div>
+            <button id="clear-btn" type="button">New chat</button>
+        </header>
+        <section id="introduction" aria-label="About The Big Short">
+            <div>
+                <p>The Big Short helps you explore what is currently trading on Kalshi, understand exactly what makes a contract resolve YES or NO, and simulate a hypothetical position against the live order book. It explains the payout, the possible loss, and the price you would actually receive. It never places trades.</p>
+                <p>The agent uses four tools, all defined in <code>tools.py</code>.</p>
             </div>
+            <section id="use-cases" aria-labelledby="use-case-title">
+                <div class="use-intro">
+                    <h2 id="use-case-title">Try it</h2>
+                </div>
+                <ul class="use-list">
+                    <li>&ldquo;What's live right now?&rdquo;</li>
+                    <li>&ldquo;Which categories are trading today? Show me today's highest-volume market in each.&rdquo;</li>
+                    <li>&ldquo;Which markets close today?&rdquo;</li>
+                    <li>&ldquo;Pick one live market, explain its YES and NO rules, then show me what $20 on YES would mean.&rdquo;</li>
+                </ul>
+            </section>
+        </section>
+        <section id="messages" role="log" aria-label="Conversation" aria-live="polite"></section>
+        <div id="input-area">
+            <div id="starter-options">
+                <p>Choose where to begin</p>
+                <div class="starter-buttons">
+                    <button type="button">What's live right now?</button>
+                    <button type="button">Which categories are trading today? Show me today's highest-volume market in each.</button>
+                    <button type="button">Which markets close today?</button>
+                    <button type="button">Pick one live market, explain the rules, then show me $20 on YES.</button>
+                </div>
+            </div>
+            <form id="chat-form" hidden>
+                <input type="text" id="user-input" aria-label="Your question" placeholder="Ask about this market..." autocomplete="off" required />
+                <button id="send-btn" type="submit">Submit</button>
+            </form>
+            <footer>Kalshi market data. Simulated stakes, before fees. No money moves.</footer>
         </div>
-        <script>
-            const messages = document.getElementById("messages");
-            const userInput = document.getElementById("user-input");
-            const sendBtn = document.getElementById("send-btn");
-            let sessionId = null;
+    </main>
+    <script>
+        const messages = document.getElementById("messages");
+        const userInput = document.getElementById("user-input");
+        const sendBtn = document.getElementById("send-btn");
+        const clearBtn = document.getElementById("clear-btn");
+        const chatForm = document.getElementById("chat-form");
+        const starterOptions = document.getElementById("starter-options");
+        const starters = document.querySelectorAll(".starter-buttons button");
+        const queries = [
+            "What's live right now?",
+            "Which categories are trading today? Show me today's highest-volume market in each.",
+            "Which markets close today?",
+            "Pick one live market, explain its YES and NO rules, then show me what $20 on YES would mean."
+        ];
+        const labels = { search_markets: "MARKET SCAN", explain_resolution: "THE FINE PRINT",
+            liquidity_check: "LIQUIDITY CHECK", simulate_trade: "TRADE SIMULATION" };
+        let sessionId = null;
+        let busy = false;
+        let guidedStart = true;
 
-            function addMessage(role, text, isLoading = false) {
-                const div = document.createElement("div");
-                div.className =
-                    "msg " +
-                    (role === "you" ? "user" : "assistant") +
-                    (isLoading ? " loading" : "");
-                div.innerHTML =
-                    '<div class="role">' +
-                    role +
-                    '</div><div class="content">' +
-                    text +
-                    "</div>";
-                messages.appendChild(div);
-                messages.scrollTop = messages.scrollHeight;
-                return div;
-            }
+        function addMessage(role, text, isLoading = false) {
+            const div = document.createElement("div");
+            div.className = "msg " + (role === "you" ? "user" : "assistant") + (isLoading ? " loading" : "");
+            const label = document.createElement("div");
+            label.className = "role";
+            label.textContent = role;
+            const content = document.createElement("div");
+            content.className = "content";
+            content.textContent = text;
+            div.append(label, content);
+            messages.appendChild(div);
+            div.scrollIntoView({ block: "nearest" });
+            return div;
+        }
 
-            async function send() {
-                const text = userInput.value.trim();
-                if (!text) return;
+        function setGuidedStart(value) {
+            guidedStart = value;
+            starterOptions.hidden = !value;
+            chatForm.hidden = value;
+            userInput.disabled = value || busy;
+            if (!value) userInput.focus({ preventScroll: true });
+        }
 
-                userInput.value = "";
-                sendBtn.disabled = true;
-                addMessage("you", text);
-                const loading = addMessage("assistant", "Thinking...", true);
+        function setBusy(value) {
+            busy = value;
+            sendBtn.disabled = clearBtn.disabled = value;
+            userInput.disabled = value || guidedStart;
+            starters.forEach(button => button.disabled = value);
+            messages.setAttribute("aria-busy", String(value));
+        }
 
-                try {
-                    const res = await fetch("/chat", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            message: text,
-                            session_id: sessionId,
-                        }),
-                    });
-                    const data = await res.json();
-                    sessionId = data.session_id;
-
-                    // Show each tool the harness ran, above the assistant's answer
-                    for (const call of data.tool_calls || []) {
-                        const div = document.createElement("div");
-                        div.className = "tool";
-                        const label = document.createElement("span");
-                        label.className = "label";
-                        label.textContent = "tool call  ";
-                        div.appendChild(label);
-                        div.appendChild(
-                            document.createTextNode(
-                                call.name + "(" + JSON.stringify(call.args) + ")\n→ " + call.result,
-                            ),
-                        );
-                        messages.insertBefore(div, loading);
-                    }
-                    loading.querySelector(".content").textContent =
-                        data.response;
-                    loading.classList.remove("loading");
-                } catch (e) {
-                    loading.querySelector(".content").textContent =
-                        "Error: " + e.message;
-                    loading.classList.remove("loading");
+        async function send(starterText = "") {
+            const text = starterText || userInput.value.trim();
+            if (!text || busy) return;
+            userInput.value = "";
+            setBusy(true);
+            addMessage("you", text);
+            const loading = addMessage("analyst", "Making alpha ...", true);
+            try {
+                const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text, session_id: sessionId }),
+                });
+                if (!res.ok) throw new Error("The server returned HTTP " + res.status + ". Please retry.");
+                const data = await res.json();
+                sessionId = data.session_id;
+                for (const call of data.tool_calls || []) {
+                    const div = document.createElement("div");
+                    div.className = "tool";
+                    const label = document.createElement("div");
+                    label.className = "label";
+                    label.textContent = labels[call.name] || call.name;
+                    const args = document.createElement("div");
+                    args.className = "args";
+                    args.textContent = call.name + "(" + JSON.stringify(call.args) + ")";
+                    const details = document.createElement("details");
+                    const summary = document.createElement("summary");
+                    summary.textContent = "Tool result";
+                    const result = document.createElement("pre");
+                    try { result.textContent = JSON.stringify(JSON.parse(call.result), null, 2); }
+                    catch { result.textContent = call.result; }
+                    details.append(summary, result);
+                    div.append(label, args, details);
+                    messages.insertBefore(div, loading);
                 }
-                sendBtn.disabled = false;
-                userInput.focus();
+                loading.querySelector(".content").textContent = data.response;
+            } catch (error) {
+                loading.querySelector(".content").textContent = "Error: " + error.message;
+            } finally {
+                loading.classList.remove("loading");
+                setBusy(false);
+                loading.scrollIntoView({ block: "nearest" });
+                userInput.focus({ preventScroll: true });
             }
+        }
 
-            sendBtn.addEventListener("click", send);
-            userInput.addEventListener("keydown", function (e) {
-                if (e.key === "Enter") send();
-            });
-            userInput.focus();
-        </script>
-    </body>
+        clearBtn.addEventListener("click", async () => {
+            if (busy) return;
+            setBusy(true);
+            try {
+                if (sessionId) {
+                    const res = await fetch("/clear?session_id=" + encodeURIComponent(sessionId), { method: "POST" });
+                    if (!res.ok) throw new Error("Could not clear this conversation. Please retry.");
+                }
+                sessionId = null;
+                messages.replaceChildren();
+                userInput.value = "";
+                setGuidedStart(true);
+            } catch (error) {
+                addMessage("analyst", error.message);
+            } finally {
+                setBusy(false);
+                if (!guidedStart) userInput.focus();
+            }
+        });
+        starters.forEach((button, index) => button.addEventListener("click", () => {
+            if (busy) return;
+            setGuidedStart(false);
+            send(queries[index]);
+        }));
+        chatForm.addEventListener("submit", event => {
+            event.preventDefault();
+            send();
+        });
+        setGuidedStart(true);
+    </script>
+</body>
 </html>

@@ -1,7 +1,7 @@
 [project]
-name = "gemini-web-tool-calling"
+name = "the-big-short"
 version = "0.1.0"
-description = "qwen-tool-calling behind a web server: FastAPI + LiteLLM + Gemini, with tool calls shown in the UI"
+description = "A chat agent that checks hot takes against Kalshi markets and live order books"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.109.0",
