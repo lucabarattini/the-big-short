@@ -34,3 +34,5 @@ highest-volume market across every category; the agent should explain that limit
    (older docs and the endpoint itself still call it Vertex AI)
 2. Run `gcloud auth application-default login`.
 3. `uv run app.py`, then open http://localhost:8000
+
+#### Or, just use the-big-short.cloud.run : )
