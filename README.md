@@ -5,6 +5,8 @@ exactly what makes a contract resolve YES or NO, and simulate a hypothetical
 position against the live order book. It explains the payout, the possible loss,
 and the price you would actually receive. It never places trades.
 
+## Or, just use [the-big-short.cloud.run](https://the-big-short.cloud.run) :)
+
 The agent uses four tools, all defined in [`tools.py`](tools.py):
 
 | Tool | What it does |
