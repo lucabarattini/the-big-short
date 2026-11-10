@@ -7,6 +7,8 @@ position against the order book.
 It explains the payout, the possible loss, and the price you would actually receive.
 However, it never places trades (this is out of scope).
 
+---
+
 To run it locally, you can just:
 
 1. Set up a Google Cloud project.
@@ -21,7 +23,7 @@ To run it locally, you can just:
 4. Run `gcloud auth application-default login`.
 5. Run `uv run app.py`, then open http://localhost:8000.
 
-## Or, you could just use [the-big-short.cloud.run](https://the-big-short.cloud.run) :)
+#### Or, you could just use [the-big-short.cloud.run](https://the-big-short.cloud.run) :)
 
 The agent uses four main tools, all defined in [`tools.py`](tools.py):
 
@@ -36,7 +38,7 @@ The web agent runs on FastAPI, LiteLLM, and Gemini 3.8 Flash through Vertex AI.
 Conversation history is not saved after your session ends, and tool calls are shown
 in the chat for debugging.
 
-## Try it by asking the following demo questions
+#### Try it by asking the following demo questions
 
 1. "What's live right now?"
 2. "Which categories are trading today? Show me today's highest-volume market in each."
