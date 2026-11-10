@@ -15,9 +15,9 @@
 
 ## Assignment requirements
 
-- Follow PLAN.md, using the existing FastAPI, LiteLLM, Gemini, and single HTML starter. No new frameworks or dependencies.
+- Use the existing FastAPI, LiteLLM, Gemini, and single HTML starter. No new frameworks or dependencies.
 - Remember conversations within sessions and keep separate sessions isolated.
-- Provide at least three well-described tools, including external data access and one original tool per team member. This solo project has four tools, including liquidity_check and call_my_bluff as original candidates; class-wide uniqueness requires comparison with other submissions.
+- Provide at least three well-described tools, including external data access and one original tool per team member. This solo project has four tools, with liquidity_check as the original tool; class-wide uniqueness requires comparison with other submissions.
 - Describe tool names and arguments clearly. Return actionable errors to the model.
 - Preserve the /chat response fields: response, session_id, and tool_calls, with name, args, and result for every call. Show calls in the UI.
 - Give the agent a distinct frontend and three sample grader queries in the README draft.

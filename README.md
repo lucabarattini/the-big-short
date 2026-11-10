@@ -1,4 +1,4 @@
-# The Big Short
+![The Big Short: markets without the mystique](assets/banner.png)
 
 The Big Short helps you explore what is currently trading on Kalshi, understand
 exactly what makes a contract resolve to "YES" or "NO", and simulate a hypothetical
@@ -10,14 +10,18 @@ However, it never places trades (this is out of scope).
 To run it locally, you can just:
 
 1. Set up a Google Cloud project.
-2. Enable the Agent Platform API.
-3. Navigate to your project folder.
+2. Enable the [Agent Platform API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com).
+3. Clone the repository and navigate to the project folder:
+
+   ```
+   git clone https://github.com/lucabarattini/the-big-short.git
+   cd the-big-short
+   ```
+
 4. Run `gcloud auth application-default login`.
 5. Run `uv run app.py`, then open http://localhost:8000.
 
 ## Or, you could just use [the-big-short.cloud.run](https://the-big-short.cloud.run) :)
-
----
 
 The agent uses four main tools, all defined in [`tools.py`](tools.py):
 
